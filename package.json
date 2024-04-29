@@ -6,16 +6,30 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "prettier:check": "prettier --check .",
+    "prettier:write": "prettier --write ."
   },
   "dependencies": {
+    "@react-navigation/bottom-tabs": "^6.5.20",
+    "@react-navigation/native": "^6.1.17",
     "expo": "~50.0.14",
+    "expo-av": "~13.10.6",
+    "expo-linear-gradient": "^12.7.2",
     "expo-status-bar": "~1.11.1",
     "react": "18.2.0",
-    "react-native": "0.73.6"
+    "react-native": "0.73.6",
+    "react-native-paper": "^5.12.3",
+    "react-native-timer-picker": "^1.6.0",
+    "react-native-vector-icons": "^10.0.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "prettier": "3.2.5"
+  },
+  "engines": {
+    "node": "20.x",
+    "npm": "10.x"
   },
   "private": true
 }
