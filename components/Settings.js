@@ -20,13 +20,14 @@ const SettingsScreen = ({ navigation }) => {
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
 
-  useEffect(() => {
-    const getAlarmInterval = async () => {
-      const alarmInterval = Number(
+  const getAlarmInterval = async () => {
+    const alarmInterval = Number(
         (await AsyncStorage.getItem('DELAY_INTERVAL')) || 30
-      );
-      setAlarmIntervalInSecs(alarmInterval);
-    };
+    );
+    setAlarmIntervalInSecs(alarmInterval);
+  };
+
+  useEffect(() => {
     void getAlarmInterval();
   }, []);
 
@@ -42,6 +43,11 @@ const SettingsScreen = ({ navigation }) => {
       // saving error
       console.log(e);
     }
+  };
+
+  const resetSettings = async () => {
+    await getAlarmInterval();
+    hideDialog();
   };
 
   return (
@@ -77,7 +83,7 @@ const SettingsScreen = ({ navigation }) => {
             {dialog === Settings.BELL_SOUND && <></>}
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => hideDialog()}>Cancel</Button>
+            <Button onPress={() => resetSettings()}>Cancel</Button>
             <Button onPress={() => saveSettings()}>Save</Button>
           </Dialog.Actions>
         </Dialog>
