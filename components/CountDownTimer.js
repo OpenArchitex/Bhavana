@@ -5,6 +5,7 @@ import CountDownTimerStates from '../constants/CountDownTimerStates';
 import { Audio } from 'expo-av';
 import { TimerPicker } from 'react-native-timer-picker';
 import { LinearGradient } from 'expo-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 async function prepareSound() {
   try {
@@ -16,24 +17,26 @@ async function prepareSound() {
   }
 }
 
-const CountDownTimer = ({
-  timerState,
-  showStopButton,
-  alarmInterval = 30000,
-}) => {
-  const theme = useTheme();
+const CountDownTimer = ({ timerState, showPauseButton, showStopButton }) => {
+  const [alarmIntervalInSecs, setAlarmIntervalInSecs] = useState(30);
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [counter, setCounter] = useState(
     hours * 60 * 60 + minutes * 60 + seconds
   );
-  const remainingHours = Math.floor(counter / 3600);
-  const remainingMinutes = Math.floor((counter % 3600) / 60);
-  const remainingSeconds = counter % 60;
+  const remainingHours =
+    counter > 0 ? Math.floor(counter / 3600) : -Math.ceil(counter / 3600);
+  const remainingMinutes =
+    counter > 0
+      ? Math.floor((counter % 3600) / 60)
+      : -Math.ceil((counter % 3600) / 60);
+  const remainingSeconds = Math.abs(counter % 60);
 
   useEffect(() => {
     if (timerState === CountDownTimerStates.RUNNING) {
+      showPauseButton(true);
+      showStopButton(true);
       const interval = setInterval(() => {
         setCounter((prevCounter) => {
           return prevCounter - 1;
@@ -47,18 +50,18 @@ const CountDownTimer = ({
 
   useEffect(() => {
     if (timerState === CountDownTimerStates.RUNNING && counter <= 0) {
-      showStopButton(false);
+      showPauseButton(false);
+      showStopButton(true);
       let isLoaded = false;
       let soundObject = prepareSound().then((soundObject) => {
         isLoaded = true;
         void soundObject.sound.playAsync();
         return soundObject;
       });
-      console.log('Loaded sound');
       const soundInterval = setInterval(() => {
         if (!isLoaded) return;
         soundObject.then((soundObject) => soundObject.sound.replayAsync());
-      }, alarmInterval);
+      }, alarmIntervalInSecs * 1000);
 
       return () => {
         clearInterval(soundInterval);
@@ -71,10 +74,21 @@ const CountDownTimer = ({
     setCounter(hours * 60 * 60 + minutes * 60 + seconds);
   }, [hours, minutes, seconds]);
 
+  useEffect(() => {
+    const getAlarmInterval = async () => {
+      const alarmInterval = Number(
+        (await AsyncStorage.getItem('DELAY_INTERVAL')) || 30
+      );
+      setAlarmIntervalInSecs(alarmInterval);
+    };
+    void getAlarmInterval();
+  }, []);
+
   const resetCounter = () => {
     setHours(0);
     setMinutes(0);
     setSeconds(0);
+    setCounter(hours * 60 * 60 + minutes * 60 + seconds);
   };
 
   const timerString = `${String(remainingMinutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;

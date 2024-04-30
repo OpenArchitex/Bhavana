@@ -9,40 +9,60 @@ const HomeScreen = () => {
   const [timerState, setTimerState] = useState(
     CountDownTimerStates.NOT_STARTED
   );
-  const [showStopButton, setShowStopButton] = useState(true);
+  const [showStopButton, setShowStopButton] = useState(false);
+  const [showPauseButton, setShowPauseButton] = useState(false);
+  const [showPlayButton, setShowPlayButton] = useState(true);
+
+  useEffect(() => {
+    if (timerState === CountDownTimerStates.RUNNING) {
+      setShowPlayButton(false);
+    } else if (timerState === CountDownTimerStates.PAUSED) {
+      setShowStopButton(true);
+      setShowPauseButton(false);
+      setShowPlayButton(true);
+    } else if (timerState === CountDownTimerStates.NOT_STARTED) {
+      setShowStopButton(false);
+      setShowPauseButton(false);
+      setShowPlayButton(true);
+    }
+  }, [timerState]);
 
   return (
     <View style={styles.container}>
       <CountDownTimer
         timerState={timerState}
+        showPauseButton={setShowPauseButton}
         showStopButton={setShowStopButton}
       />
       <View style={{ flexDirection: 'row' }}>
-        <IconButton
-          icon="stop-circle-outline"
-          size={120}
-          iconColor={theme.colors.backdrop}
-          onPress={() => {
-            setTimerState(CountDownTimerStates.NOT_STARTED);
-            setShowStopButton(true);
-          }}
-        />
         {showStopButton && (
           <IconButton
-            icon={
-              timerState === CountDownTimerStates.RUNNING
-                ? 'pause-circle-outline'
-                : 'play-circle-outline'
-            }
+            icon="stop-circle-outline"
+            size={120}
+            iconColor={theme.colors.backdrop}
+            onPress={() => {
+              setTimerState(CountDownTimerStates.NOT_STARTED);
+            }}
+          />
+        )}
+        {showPauseButton && (
+          <IconButton
+            icon="pause-circle-outline"
             size={120}
             iconColor={theme.colors.primary}
-            onPress={() =>
-              setTimerState(
-                timerState === CountDownTimerStates.RUNNING
-                  ? CountDownTimerStates.PAUSED
-                  : CountDownTimerStates.RUNNING
-              )
-            }
+            onPress={() => {
+              setTimerState(CountDownTimerStates.PAUSED);
+            }}
+          />
+        )}
+        {showPlayButton && (
+          <IconButton
+            icon="play-circle-outline"
+            size={120}
+            iconColor={theme.colors.primary}
+            onPress={() => {
+              setTimerState(CountDownTimerStates.RUNNING);
+            }}
           />
         )}
       </View>
