@@ -6,12 +6,11 @@ import { Audio } from 'expo-av';
 import { TimerPicker } from 'react-native-timer-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Sounds from '../constants/Sounds';
 
-async function prepareSound() {
+async function prepareSound(bellSound) {
   try {
-    return await Audio.Sound.createAsync(
-      require('./../assets/timer-sounds/bell-sound.mp3')
-    );
+    return await Audio.Sound.createAsync(bellSound.value);
   } catch (e) {
     console.error('Failed to load sound:', e);
   }
@@ -19,6 +18,7 @@ async function prepareSound() {
 
 const CountDownTimer = ({ timerState, showPauseButton, showStopButton }) => {
   const [alarmIntervalInSecs, setAlarmIntervalInSecs] = useState(30);
+  const [bellSound, setBellSound] = useState(Sounds.BELL_SOUND);
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
@@ -53,7 +53,7 @@ const CountDownTimer = ({ timerState, showPauseButton, showStopButton }) => {
       showPauseButton(false);
       showStopButton(true);
       let isLoaded = false;
-      let soundObject = prepareSound().then((soundObject) => {
+      let soundObject = prepareSound(bellSound).then((soundObject) => {
         isLoaded = true;
         void soundObject.sound.playAsync();
         return soundObject;
@@ -82,7 +82,16 @@ const CountDownTimer = ({ timerState, showPauseButton, showStopButton }) => {
       setAlarmIntervalInSecs(alarmInterval);
     };
     void getAlarmInterval();
-  }, []);
+  }, [counter <= 3]);
+
+  useEffect(() => {
+    const getBellSound = async () => {
+      const bellSound =
+        (await AsyncStorage.getItem('BELL_SOUND')) || Sounds.BELL_SOUND;
+      setBellSound(JSON.parse(bellSound));
+    };
+    void getBellSound();
+  }, [counter <= 3]);
 
   const resetCounter = () => {
     setHours(0);

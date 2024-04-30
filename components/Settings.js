@@ -1,17 +1,18 @@
 import { StyleSheet } from 'react-native';
 import { Appbar, Portal, Button, Dialog, useTheme } from 'react-native-paper';
-import { List } from 'react-native-paper';
+import { List, RadioButton } from 'react-native-paper';
 import { useEffect, useState } from 'react';
 import Settings from '../constants/Settings';
 import { TimerPicker } from 'react-native-timer-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Sounds from '../constants/Sounds';
 
 const SettingsScreen = ({ navigation }) => {
   const theme = useTheme();
   const [alarmIntervalInSecs, setAlarmIntervalInSecs] = useState(30);
   const [visible, setVisible] = useState(false);
-  const [bellSound, setBellSound] = useState('bell-sound.mp3');
+  const [bellSound, setBellSound] = useState(Sounds.BELL_SOUND);
   const [dialog, setDialog] = useState(null);
 
   const alarmIntervalMinutes = Math.floor((alarmIntervalInSecs % 3600) / 60);
@@ -20,15 +21,22 @@ const SettingsScreen = ({ navigation }) => {
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
 
-  const getAlarmInterval = async () => {
-    const alarmInterval = Number(
-        (await AsyncStorage.getItem('DELAY_INTERVAL')) || 30
-    );
-    setAlarmIntervalInSecs(alarmInterval);
+  const getSettings = async () => {
+    const settings = await AsyncStorage.multiGet([
+      'DELAY_INTERVAL',
+      'BELL_SOUND',
+    ]);
+    if (settings[0][0] === 'DELAY_INTERVAL') {
+      setAlarmIntervalInSecs(Number(settings[0][1]));
+    }
+
+    if (settings[1][0] === 'BELL_SOUND') {
+      setBellSound(JSON.parse(settings[1][1]));
+    }
   };
 
   useEffect(() => {
-    void getAlarmInterval();
+    void getSettings();
   }, []);
 
   const saveSettings = async () => {
@@ -36,7 +44,7 @@ const SettingsScreen = ({ navigation }) => {
       setAlarmIntervalInSecs(alarmIntervalInSecs);
       await AsyncStorage.multiSet([
         ['DELAY_INTERVAL', alarmIntervalInSecs.toString()],
-        ['BELL_SOUND', bellSound],
+        ['BELL_SOUND', JSON.stringify(bellSound)],
       ]);
       hideDialog();
     } catch (e) {
@@ -80,7 +88,20 @@ const SettingsScreen = ({ navigation }) => {
                 }}
               />
             )}
-            {dialog === Settings.BELL_SOUND && <></>}
+            {dialog === Settings.BELL_SOUND && (
+              <RadioButton.Group
+                onValueChange={(value) => setBellSound(Sounds[value])}
+                value={bellSound.key}
+              >
+                {Object.values(Sounds).map((sound) => (
+                  <RadioButton.Item
+                    key={sound.key}
+                    label={sound.label}
+                    value={sound.key}
+                  />
+                ))}
+              </RadioButton.Group>
+            )}
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={() => resetSettings()}>Cancel</Button>
@@ -107,7 +128,7 @@ const SettingsScreen = ({ navigation }) => {
             }
           }}
           left={() => <List.Icon icon="playlist-music" />}
-          description={`${Settings.BELL_SOUND.DESCRIPTION}: ${bellSound}`}
+          description={`${Settings.BELL_SOUND.DESCRIPTION}: ${bellSound.label}`}
         />
       </List.Section>
     </>
