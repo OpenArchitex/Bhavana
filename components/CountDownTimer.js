@@ -54,6 +54,7 @@ const CountDownTimer = ({ timerState, showPauseButton, showStopButton }) => {
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (timerState !== CountDownTimerStates.RUNNING) return;
       if (nextAppState === 'inactive' || nextAppState === 'background') {
         setAppBackgroundPointTime(Date.now());
         void Notifications.scheduleNotificationAsync({
@@ -61,19 +62,20 @@ const CountDownTimer = ({ timerState, showPauseButton, showStopButton }) => {
             title: 'Your Timer is Running',
             body: 'Your timer is still running in the background. Tap to open the app.',
             priority: Notifications.AndroidNotificationPriority.MAX,
-            vibrate: false,
+            sticky: true,
           },
           trigger: null,
         });
+
         Notifications.scheduleNotificationAsync({
           content: {
             title: 'Your Time is Up!',
             body: 'Your timer has finished! Tap to open the app.',
             priority: Notifications.AndroidNotificationPriority.MAX,
             sound: bellSound.fileName,
-            vibrate: false,
+            vibrate: [],
           },
-          trigger: { seconds: counter },
+          trigger: { seconds: counter, channelId: 'Bhavana' },
         }).then((notificationId) =>
           setFutureTimerEndNotificationId(notificationId)
         );
@@ -82,6 +84,7 @@ const CountDownTimer = ({ timerState, showPauseButton, showStopButton }) => {
         setCounter(
           counter - Math.floor((Date.now() - appBackgroundPointTime) / 1000)
         );
+        void Notifications.dismissAllNotificationsAsync();
         if (counter > 0) {
           void Notifications.cancelScheduledNotificationAsync(
             futureTimerEndNotificationId

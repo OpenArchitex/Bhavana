@@ -28,6 +28,7 @@
       [
         "expo-notifications",
         {
+          "icon": "./assets/notification-icon.png",
           "sounds": [
             "./assets/timer-sounds/Thadobati-D-Sharp.mp3",
             "./assets/timer-sounds/Thadobati-G-Sharp.mp3",
