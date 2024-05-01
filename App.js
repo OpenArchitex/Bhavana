@@ -1,10 +1,11 @@
-import { CommonActions, NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { CommonActions, NavigationContainer } from '@react-navigation/native';
+import { StatusBar } from 'react-native';
 import { BottomNavigation, PaperProvider } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import HomeScreen from './components/HomeScreen';
 import SettingsScreen from './components/Settings';
-import { StatusBar } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 

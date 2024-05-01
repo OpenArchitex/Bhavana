@@ -1,11 +1,18 @@
-import { StyleSheet } from 'react-native';
-import { Appbar, Portal, Button, Dialog, useTheme } from 'react-native-paper';
-import { List, RadioButton } from 'react-native-paper';
-import { useEffect, useState } from 'react';
-import Settings from '../constants/Settings';
-import { TimerPicker } from 'react-native-timer-picker';
-import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useEffect, useState } from 'react';
+import {
+  Appbar,
+  Portal,
+  Button,
+  Dialog,
+  useTheme,
+  List,
+  RadioButton,
+} from 'react-native-paper';
+import { TimerPicker } from 'react-native-timer-picker';
+
+import Settings from '../constants/Settings';
 import Sounds from '../constants/Sounds';
 
 const SettingsScreen = ({ navigation }) => {
@@ -73,8 +80,8 @@ const SettingsScreen = ({ navigation }) => {
               <TimerPicker
                 initialMinutes={alarmIntervalMinutes}
                 initialSeconds={alarmIntervalSeconds}
-                hideHours={true}
-                allowFontScaling={true}
+                hideHours
+                allowFontScaling
                 LinearGradient={LinearGradient}
                 topPickerGradientOverlayProps={{
                   colors: [theme.colors.surface, 'transparent'],
@@ -122,10 +129,8 @@ const SettingsScreen = ({ navigation }) => {
         <List.Item
           title="Bell Sound"
           onPress={() => {
-            {
-              setDialog(Settings.BELL_SOUND);
-              showDialog();
-            }
+            setDialog(Settings.BELL_SOUND);
+            showDialog();
           }}
           left={() => <List.Icon icon="playlist-music" />}
           description={`${Settings.BELL_SOUND.DESCRIPTION}: ${bellSound.label}`}
@@ -134,13 +139,5 @@ const SettingsScreen = ({ navigation }) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
 
 export default SettingsScreen;

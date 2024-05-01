@@ -1,7 +1,8 @@
+import { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { IconButton, useTheme } from 'react-native-paper';
+
 import CountDownTimer from './CountDownTimer';
-import { useEffect, useState } from 'react';
 import CountDownTimerStates from '../constants/CountDownTimerStates';
 
 const HomeScreen = () => {

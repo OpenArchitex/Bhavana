@@ -1,13 +1,14 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Audio } from 'expo-av';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Notifications from 'expo-notifications';
+import { useEffect, useState } from 'react';
 import { View, StyleSheet, AppState } from 'react-native';
 import { Text } from 'react-native-paper';
-import { useEffect, useState } from 'react';
-import CountDownTimerStates from '../constants/CountDownTimerStates';
-import { Audio } from 'expo-av';
 import { TimerPicker } from 'react-native-timer-picker';
-import { LinearGradient } from 'expo-linear-gradient';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import CountDownTimerStates from '../constants/CountDownTimerStates';
 import Sounds from '../constants/Sounds';
-import * as Notifications from 'expo-notifications';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -118,7 +119,7 @@ const CountDownTimer = ({ timerState, showPauseButton, showStopButton }) => {
       showPauseButton(false);
       showStopButton(true);
       let isLoaded = false;
-      let soundObject = prepareSound(bellSound).then((soundObject) => {
+      const soundObject = prepareSound(bellSound).then((soundObject) => {
         isLoaded = true;
         void soundObject.sound.playAsync();
         return soundObject;
@@ -175,7 +176,7 @@ const CountDownTimer = ({ timerState, showPauseButton, showStopButton }) => {
     <View style={styles.container}>
       {timerState === CountDownTimerStates.NOT_STARTED ? (
         <TimerPicker
-          allowFontScaling={true}
+          allowFontScaling
           minuteLabel=":"
           hourLabel=":"
           secondLabel=""
