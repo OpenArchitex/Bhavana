@@ -64,6 +64,7 @@ const CountDownTimer = ({ timerState, showPauseButton, showStopButton }) => {
             body: 'Your timer is still running in the background. Tap to open the app.',
             priority: Notifications.AndroidNotificationPriority.MAX,
             sticky: true,
+            vibrate: false,
           },
           trigger: null,
         });
@@ -74,7 +75,7 @@ const CountDownTimer = ({ timerState, showPauseButton, showStopButton }) => {
             body: 'Your timer has finished! Tap to open the app.',
             priority: Notifications.AndroidNotificationPriority.MAX,
             sound: bellSound.fileName,
-            vibrate: [],
+            vibrate: [0, 250, 250, 250],
           },
           trigger: { seconds: counter, channelId: 'Bhavana' },
         }).then((notificationId) =>
