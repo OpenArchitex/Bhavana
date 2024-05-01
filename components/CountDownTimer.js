@@ -1,6 +1,6 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, AppState } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import CountDownTimerStates from '../constants/CountDownTimerStates';
 import { Audio } from 'expo-av';
 import { TimerPicker } from 'react-native-timer-picker';
@@ -25,6 +25,8 @@ const CountDownTimer = ({ timerState, showPauseButton, showStopButton }) => {
   const [counter, setCounter] = useState(
     hours * 60 * 60 + minutes * 60 + seconds
   );
+  const [appBackgroundPointTime, setAppBackgroundPointTime] = useState(0);
+
   const remainingHours =
     counter > 0 ? Math.floor(counter / 3600) : -Math.ceil(counter / 3600);
   const remainingMinutes =
@@ -32,6 +34,22 @@ const CountDownTimer = ({ timerState, showPauseButton, showStopButton }) => {
       ? Math.floor((counter % 3600) / 60)
       : -Math.ceil((counter % 3600) / 60);
   const remainingSeconds = Math.abs(counter % 60);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'inactive' || nextAppState === 'background') {
+        setAppBackgroundPointTime(Date.now());
+      } else {
+        setCounter(
+          counter - Math.floor((Date.now() - appBackgroundPointTime) / 1000)
+        );
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  });
 
   useEffect(() => {
     if (timerState === CountDownTimerStates.RUNNING) {

@@ -1,4 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
 import { CommonActions, NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { BottomNavigation, PaperProvider } from 'react-native-paper';

@@ -54,7 +54,7 @@ const SettingsScreen = ({ navigation }) => {
   };
 
   const resetSettings = async () => {
-    await getAlarmInterval();
+    await getSettings();
     hideDialog();
   };
 
