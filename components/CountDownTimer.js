@@ -61,6 +61,7 @@ const CountDownTimer = ({ timerState, showPauseButton, showStopButton }) => {
             title: 'Your Timer is Running',
             body: 'Your timer is still running in the background. Tap to open the app.',
             priority: Notifications.AndroidNotificationPriority.MAX,
+            vibrate: false,
           },
           trigger: null,
         });
@@ -68,15 +69,16 @@ const CountDownTimer = ({ timerState, showPauseButton, showStopButton }) => {
           content: {
             title: 'Your Time is Up!',
             body: 'Your timer has finished! Tap to open the app.',
-            sticky: true,
             priority: Notifications.AndroidNotificationPriority.MAX,
             sound: bellSound.fileName,
+            vibrate: false,
           },
           trigger: { seconds: counter },
         }).then((notificationId) =>
           setFutureTimerEndNotificationId(notificationId)
         );
       } else {
+        if (appBackgroundPointTime === 0) return;
         setCounter(
           counter - Math.floor((Date.now() - appBackgroundPointTime) / 1000)
         );
