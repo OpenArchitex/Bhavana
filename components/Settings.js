@@ -26,11 +26,11 @@ const SettingsScreen = ({ navigation }) => {
       'DELAY_INTERVAL',
       'BELL_SOUND',
     ]);
-    if (settings[0][0] === 'DELAY_INTERVAL') {
+    if (settings[0][1]) {
       setAlarmIntervalInSecs(Number(settings[0][1]));
     }
 
-    if (settings[1][0] === 'BELL_SOUND') {
+    if (settings[1][1]) {
       setBellSound(JSON.parse(settings[1][1]));
     }
   };

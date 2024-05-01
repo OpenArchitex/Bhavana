@@ -141,16 +141,20 @@ const CountDownTimer = ({ timerState, showPauseButton, showStopButton }) => {
       );
       setAlarmIntervalInSecs(alarmInterval);
     };
-    void getAlarmInterval();
+    void getAlarmInterval().catch((e) => console.error(e));
   }, [counter <= 3]);
 
   useEffect(() => {
     const getBellSound = async () => {
-      const bellSound =
-        (await AsyncStorage.getItem('BELL_SOUND')) || Sounds.BELL_SOUND;
-      setBellSound(JSON.parse(bellSound));
+      let bellSound = await AsyncStorage.getItem('BELL_SOUND');
+      if (!bellSound) {
+        bellSound = Sounds.BELL_SOUND;
+        setBellSound(bellSound);
+      } else {
+        setBellSound(JSON.parse(bellSound));
+      }
     };
-    void getBellSound();
+    void getBellSound().catch((e) => console.error(e));
   }, [counter <= 3]);
 
   const resetCounter = () => {
