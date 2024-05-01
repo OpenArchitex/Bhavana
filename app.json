@@ -23,6 +23,22 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "sounds": [
+            "./assets/timer-sounds/Thadobati-D-Sharp.mp3",
+            "./assets/timer-sounds/Thadobati-G-Sharp.mp3",
+            "./assets/timer-sounds/Manipuri-C-Sharp.mp3",
+            "./assets/timer-sounds/Manipuri-A-Sharp.mp3",
+            "./assets/timer-sounds/Lingam-C-Sharp.mp3",
+            "./assets/timer-sounds/CrystalBowl.mp3",
+            "./assets/timer-sounds/bell-sound.mp3"
+          ]
+        }
+      ]
+    ]
   }
 }

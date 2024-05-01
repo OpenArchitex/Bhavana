@@ -1,12 +1,21 @@
 import { View, StyleSheet, AppState } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
-import { useEffect, useRef, useState } from 'react';
+import { Text } from 'react-native-paper';
+import { useEffect, useState } from 'react';
 import CountDownTimerStates from '../constants/CountDownTimerStates';
 import { Audio } from 'expo-av';
 import { TimerPicker } from 'react-native-timer-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Sounds from '../constants/Sounds';
+import * as Notifications from 'expo-notifications';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 async function prepareSound(bellSound) {
   try {
@@ -26,6 +35,8 @@ const CountDownTimer = ({ timerState, showPauseButton, showStopButton }) => {
     hours * 60 * 60 + minutes * 60 + seconds
   );
   const [appBackgroundPointTime, setAppBackgroundPointTime] = useState(0);
+  const [futureTimerEndNotificationId, setFutureTimerEndNotificationId] =
+    useState('');
 
   const remainingHours =
     counter > 0 ? Math.floor(counter / 3600) : -Math.ceil(counter / 3600);
@@ -35,14 +46,45 @@ const CountDownTimer = ({ timerState, showPauseButton, showStopButton }) => {
       : -Math.ceil((counter % 3600) / 60);
   const remainingSeconds = Math.abs(counter % 60);
 
+  void Notifications.setNotificationChannelAsync('Bhavana', {
+    name: 'Bhavana Notifications',
+    importance: Notifications.AndroidImportance.MAX,
+    sound: bellSound.fileName, // <- for Android 8.0+, see channelId property below
+  });
+
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       if (nextAppState === 'inactive' || nextAppState === 'background') {
         setAppBackgroundPointTime(Date.now());
+        void Notifications.scheduleNotificationAsync({
+          content: {
+            title: 'Your Timer is Running',
+            body: 'Your timer is still running in the background. Tap to open the app.',
+            priority: Notifications.AndroidNotificationPriority.MAX,
+          },
+          trigger: null,
+        });
+        Notifications.scheduleNotificationAsync({
+          content: {
+            title: 'Your Time is Up!',
+            body: 'Your timer has finished! Tap to open the app.',
+            sticky: true,
+            priority: Notifications.AndroidNotificationPriority.MAX,
+            sound: bellSound.fileName,
+          },
+          trigger: { seconds: counter },
+        }).then((notificationId) =>
+          setFutureTimerEndNotificationId(notificationId)
+        );
       } else {
         setCounter(
           counter - Math.floor((Date.now() - appBackgroundPointTime) / 1000)
         );
+        if (counter > 0) {
+          void Notifications.cancelScheduledNotificationAsync(
+            futureTimerEndNotificationId
+          );
+        }
       }
     });
 
