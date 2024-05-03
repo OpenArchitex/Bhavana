@@ -9,9 +9,9 @@
     "web": "expo start --web",
     "prettier:check": "prettier --check .",
     "prettier:write": "prettier --write .",
-    "eslint": "eslint . --ignore-pattern .gitignore",
-    "eslint:quiet": "npm run eslint -- --quiet",
-    "eslint:fix": "npm run eslint -- --fix"
+    "lint": "eslint . --ignore-pattern .gitignore",
+    "lint:quiet": "npm run lint -- --quiet",
+    "lint:fix": "npm run lint -- --fix"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.21.0",
