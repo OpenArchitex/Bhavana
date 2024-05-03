@@ -31,13 +31,13 @@
         {
           "icon": "./assets/notification-icon.png",
           "sounds": [
-            "./assets/timer-sounds/Thadobati-D-Sharp.wav",
-            "./assets/timer-sounds/Thadobati-G-Sharp.wav",
-            "./assets/timer-sounds/Manipuri-C-Sharp.wav",
-            "./assets/timer-sounds/Manipuri-A-Sharp.wav",
-            "./assets/timer-sounds/Lingam-C-Sharp.wav",
-            "./assets/timer-sounds/CrystalBowl.wav",
-            "./assets/timer-sounds/bell-sound.wav"
+            "./assets/timer-sounds/Thadobati_D_Sharp.wav",
+            "./assets/timer-sounds/Thadobati_G_Sharp.wav",
+            "./assets/timer-sounds/Manipuri_C_Sharp.wav",
+            "./assets/timer-sounds/Manipuri_A_Sharp.wav",
+            "./assets/timer-sounds/Lingam_C_Sharp.wav",
+            "./assets/timer-sounds/Crystal_Bowl.wav",
+            "./assets/timer-sounds/bell_sound.wav"
           ]
         }
       ]
